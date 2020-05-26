@@ -8,7 +8,7 @@
 set -e
 
 # Override from environment
-AOSP_IMAGE=${AOSP_IMAGE:-kylemanna/aosp}
+AOSP_IMAGE=${AOSP_IMAGE:-budtmo/docker-android-x86-5.0.1}
 AOSP_VOL=${AOSP_VOL:-/vol0}
 AOSP_ARGS=${AOSP_ARGS:---rm -it}
 AOSP_VOL_AOSP=${AOSP_VOL_AOSP:-$AOSP_VOL/aosp}
@@ -23,6 +23,9 @@ if [ -n "$SSH_AUTH_SOCK" ]; then
     SSH_AUTH_ARGS="-v $SSH_AUTH_SOCK:/tmp/ssh_auth -e SSH_AUTH_SOCK=/tmp/ssh_auth"
 fi
 
-docker run $AOSP_ARGS $SSH_AUTH_ARGS $AOSP_EXTRA_ARGS \
+#docker run -u 0 -it --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" --name android-container budtmo/docker-android-x86-5.0.1
+
+docker run  -u 0 --privileged -d -p 6080:6080 -p 5554:5554 -p 5555:5555 -e DEVICE="Samsung Galaxy S6" $AOSP_ARGS $SSH_AUTH_ARGS $AOSP_EXTRA_ARGS \
     -v "$AOSP_VOL_AOSP:/aosp" -v "$AOSP_VOL_CCACHE:/tmp/ccache" \
+    -v "/opt/jdk/:/tmp/jdk/" \
     $AOSP_IMAGE $@
